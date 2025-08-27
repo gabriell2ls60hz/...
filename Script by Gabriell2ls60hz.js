@@ -32,11 +32,11 @@ function setupMain(){
     /* QuestionSpoof */
     (function () {
         const phrases = [ 
-            "🔥 Script by Gabriell2ls60hz é da sarah",
-            "🤍 Script by Gabriell2ls60hz é da sarah",
-            "☄️ Script by Gabriell2ls60hz é da sarah",
-            "🌟 Script by Gabriell2ls60hz é da sarah",
-            "☄️ Script by Gabriell2ls60hz é da sarah",
+            "🔥 Script by Gabriell2ls60hz!",
+            "🤍 Script by Gabriell2ls60hz!",
+            "☄️ Script by Gabriell2ls60hz!",
+            "🌟 Script by Gabriell2ls60hz!",
+            "☄️ Script by Gabriell2ls60hz!",
         ];
         
         const originalFetch = window.fetch;
