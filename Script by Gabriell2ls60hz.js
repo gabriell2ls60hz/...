@@ -6,7 +6,7 @@ const splashScreen = document.createElement('splashScreen');
 /* Misc Styles */
 document.head.appendChild(Object.assign(document.createElement("style"),{innerHTML:"@font-face{font-family:'MuseoSans';src:url('https://corsproxy.io/?url=https://r2.e-z.host/4d0a0bea-60f8-44d6-9e74-3032a64a9f32/ynddewua.ttf')format('truetype')}" }));
 document.head.appendChild(Object.assign(document.createElement('style'),{innerHTML:"::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #f1f1f1; } ::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #555; }"}));
-document.querySelector("link[rel~='icon']").href = 'https://r2.e-z.host/4d0a0bea-60f8-44d6-9e74-3032a64a9f32/ukh0rq22.png';
+document.querySelector("link[rel~='icon']").href = 'https://p16-sign-va.tiktokcdn.com/tos-maliva-avt-0068/f8712dca27f1320c7118e9499f3ec784~tplv-tiktokx-cropcenter:1080:1080.jpeg?dr=14579&refresh_token=83d26ca3&x-expires=1756440000&x-signature=uvURJVRFXqags5Jreo4yLumdOhE%3D&t=4d5b0474&ps=13740610&shp=a5d48078&shcp=81f88b70&idc=maliva';
 
 /* Emmiter */
 class EventEmitter{constructor(){this.events={}}on(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]||(this.events[t]=[]),this.events[t].push(e)})}off(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]&&(this.events[t]=this.events[t].filter(t=>t!==e))})}emit(t,...e){this.events[t]&&this.events[t].forEach(t=>{t(...e)})}once(t,e){"string"==typeof t&&(t=[t]);let s=(...i)=>{e(...i),this.off(t,s)};this.on(t,s)}};
@@ -32,11 +32,11 @@ function setupMain(){
     /* QuestionSpoof */
     (function () {
         const phrases = [ 
-            "🔥 Get good, get [Khanware](https://github.com/Niximkk/khanware/)!",
-            "🤍 Made by [@im.nix](https://e-z.bio/sounix).",
-            "☄️ By [Niximkk/khanware](https://github.com/Niximkk/khanware/).",
-            "🌟 Star the project on [GitHub](https://github.com/Niximkk/khanware/)!",
-            "🪶 Lite mode @ KhanwareMinimal.js",
+            "🔥 Script by Gabriell2ls60hz",
+            "🤍 Script by Gabriell2ls60hz",
+            "☄️ Script by Gabriell2ls60hz",
+            "🌟 Script by Gabriell2ls60hz",
+            "☄️ Script by Gabriell2ls60hz",
         ];
         
         const originalFetch = window.fetch;
@@ -59,7 +59,7 @@ function setupMain(){
                         itemData.question.content = phrases[Math.floor(Math.random() * phrases.length)] + `[[☃ radio 1]]`;
                         itemData.question.widgets = { "radio 1": { type: "radio", options: { choices: [ { content: "Resposta correta.", correct: true }, { content: "Resposta incorreta.", correct: false } ] } } };
                         responseObj.data.assessmentItem.item.itemData = JSON.stringify(itemData);
-                        sendToast("🔓 Questão exploitada.", 1000);
+                        sendToast("🔓 Questão Feita Krlh.", 1000);
                         return new Response(JSON.stringify(responseObj), { status: originalResponse.status, statusText: originalResponse.statusText, headers: originalResponse.headers });
                     }
                 }
@@ -86,7 +86,7 @@ function setupMain(){
                         body = JSON.stringify(bodyObj);
                         if (input instanceof Request) { input = new Request(input, { body: body }); } 
                         else init.body = body; 
-                        sendToast("🔓 Vídeo exploitado.", 1000)
+                        sendToast("🔓 Vídeo Assistido Krlh.", 1000)
                     }
                 } catch (e) { debug(`🚨 Error @ videoSpoof.js\n${e}`); }
             }
@@ -104,7 +104,7 @@ function setupMain(){
             else if (init.body) body = init.body;
             if (body && input.url.includes("mark_conversions")) {
                 try {
-                    if (body.includes("termination_event")) { sendToast("🚫 Limitador de tempo bloqueado.", 1000); return; }
+                    if (body.includes("termination_event")) { sendToast("🚫 Limitador de tempo Fudido.", 1000); return; }
                 } catch (e) { debug(`🚨 Error @ minuteFarm.js\n${e}`); }
             }
             return originalFetch.apply(this, arguments);
@@ -130,7 +130,7 @@ function setupMain(){
                 for (const q of selectorsToCheck) {
                     findAndClickBySelector(q);
                     if (document.querySelector(q+"> div") && document.querySelector(q+"> div").innerText === "Mostrar resumo") {
-                        sendToast("🎉 Exercício concluído!", 3000);
+                        sendToast("🎉 Exercício Feito Krlh!", 3000);
                         playAudio("https://r2.e-z.host/4d0a0bea-60f8-44d6-9e74-3032a64a9f32/4x5g14gj.wav");
                     }
                 }
@@ -140,7 +140,7 @@ function setupMain(){
     })();
 }
 /* Inject */
-if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { alert("❌ Khanware Failed to Injected!\n\nVocê precisa executar o Khanware no site do Khan Academy! (https://pt.khanacademy.org/)"); window.location.href = "https://pt.khanacademy.org/"; }
+if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { alert("❌ Script Não Foi Injetado!\n\nVocê precisa executar o Script no site do Khan Academy burro! (https://pt.khanacademy.org/)"); window.location.href = "https://pt.khanacademy.org/"; }
 
 showSplashScreen();
 
@@ -148,7 +148,7 @@ loadScript('https://cdn.jsdelivr.net/npm/darkreader@4.9.92/darkreader.min.js', '
 loadCss('https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css', 'toastifyCss');
 loadScript('https://cdn.jsdelivr.net/npm/toastify-js', 'toastifyPlugin')
 .then(async () => {    
-    sendToast("🪶 Khanware Minimal injetado com sucesso!");
+    sendToast("🪶 Script injetado com sucesso!");
     
     playAudio('https://r2.e-z.host/4d0a0bea-60f8-44d6-9e74-3032a64a9f32/gcelzszy.wav');
     
