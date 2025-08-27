@@ -142,20 +142,5 @@ function setupMain(){
 /* Inject */
 if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { alert("❌ Script Não Foi Injetado!\n\nVocê precisa executar o Script no site do Khan Academy burro! (https://pt.khanacademy.org/)"); window.location.href = "https://pt.khanacademy.org/"; }
 
-showSplashScreen();
-
-loadScript('https://cdn.jsdelivr.net/npm/darkreader@4.9.92/darkreader.min.js', 'darkReaderPlugin').then(()=>{ DarkReader.setFetchMethod(window.fetch); DarkReader.enable(); })
-loadCss('https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css', 'toastifyCss');
-loadScript('https://cdn.jsdelivr.net/npm/toastify-js', 'toastifyPlugin')
-.then(async () => {    
-    sendToast("🪶 Script injetado com sucesso!");
-    
-    playAudio('https://r2.e-z.host/4d0a0bea-60f8-44d6-9e74-3032a64a9f32/gcelzszy.wav');
-    
-    await delay(500);
-
-    hideSplashScreen();
-    setupMain();
-    
     console.clear();
 });
