@@ -1,0 +1,34 @@
+(function () {
+  // Cria a caixa de FPS
+  const fpsBox = document.createElement("div");
+  fpsBox.style.position = "fixed";
+  fpsBox.style.top = "10px";
+  fpsBox.style.right = "10px";
+  fpsBox.style.padding = "8px 12px";
+  fpsBox.style.background = "rgba(0,0,0,0.7)";
+  fpsBox.style.color = "lime";
+  fpsBox.style.fontFamily = "monospace";
+  fpsBox.style.fontSize = "14px";
+  fpsBox.style.borderRadius = "8px";
+  fpsBox.style.zIndex = "999999";
+  fpsBox.innerText = "FPS: 0";
+  document.body.appendChild(fpsBox);
+
+  let lastFrame = performance.now();
+  let frameCount = 0;
+  let fps = 0;
+
+  function update() {
+    const now = performance.now();
+    frameCount++;
+    if (now - lastFrame >= 1000) {
+      fps = frameCount;
+      frameCount = 0;
+      lastFrame = now;
+      fpsBox.innerText = `FPS: ${fps}`;
+    }
+    requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
+})();
