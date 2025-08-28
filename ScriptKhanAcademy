@@ -9,7 +9,7 @@ document.head.appendChild(Object.assign(document.createElement('style'),{innerHT
 document.querySelector("link[rel~='icon']").href = 'https://s11.aconvert.com/convert/p3r68-cdx67/ql7wh-4p5tm.jpg';
 
 /* Emmiter */
-class EventEmitter{constructor(){this.events={}}on(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]||(this.events[t]=[]),this.events[t].push(e)})}off(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]&&(this.events[t]=this.events[t].filter(t=>t!==e))})}emit(t,...e){this.events[t]&&this.events[t].forEach(t=>{t(...e)})}once(t,e){"string"==typeof t&&(t=[t]);let s=(...i)=>{e(...i),this.off(t,s)};this.on(t,s)}};
+class EventEmitter{constructor(){this.events={}}on(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]||(this.events[t]=[]),this.events[t].push(e)})}off(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]&&(this.events[t]=this.events[t].filter(t=>t!==e))})}emit(t,...e){this.events[t]&&this.events[t].forEach(t=>{t(...e)})}once(t,e){"string"==typeof t&&(t=[t]);let s=(...i)=>{e(...i),this.off(t,s)};this.on(t,s)}}; 
 const plppdo = new EventEmitter();
 
 new MutationObserver((mutationsList) => { for (let mutation of mutationsList) if (mutation.type === 'childList') plppdo.emit('domChanged'); }).observe(document.body, { childList: true, subtree: true });
@@ -139,8 +139,12 @@ function setupMain(){
         })();
     })();
 }
+
 /* Inject */
-if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { alert("❌ Script Não Foi Injetado!\n\nVocê precisa executar o Script no site do Khan Academy burro! (https://pt.khanacademy.org/)"); window.location.href = "https://pt.khanacademy.org/"; }
+if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { 
+    alert("❌ Script Não Foi Injetado!\n\nVocê precisa executar o Script no site do Khan Academy burro! (https://pt.khanacademy.org/)"); 
+    window.location.href = "https://pt.khanacademy.org/"; 
+}
 
 showSplashScreen();
 
@@ -158,11 +162,16 @@ loadScript('https://cdn.jsdelivr.net/npm/toastify-js', 'toastifyPlugin')
     setupMain();
     
     console.clear();
+
+    // Inicia o medidor de FPS
+    startFPSCounter();
 });
 
 console.log("Meu site/app começou!");
 
-(function () {
+
+/* FPS Counter */
+function startFPSCounter() {
   const fpsBox = document.createElement("div");
   fpsBox.style.position = "fixed";
   fpsBox.style.top = "10px";
@@ -173,25 +182,28 @@ console.log("Meu site/app começou!");
   fpsBox.style.fontFamily = "monospace";
   fpsBox.style.fontSize = "14px";
   fpsBox.style.borderRadius = "8px";
-  fpsBox.style.zIndex = "999999";
+  fpsBox.style.zIndex = "9999999";
+  fpsBox.style.cursor = "pointer";
+  fpsBox.title = "Clique para fechar";
   fpsBox.innerText = "FPS: 0";
   document.body.appendChild(fpsBox);
 
   let lastFrame = performance.now();
   let frameCount = 0;
-  let fps = 0;
 
   function update() {
     const now = performance.now();
     frameCount++;
     if (now - lastFrame >= 1000) {
-      fps = frameCount;
+      fpsBox.innerText = `FPS: ${frameCount}`;
       frameCount = 0;
       lastFrame = now;
-      fpsBox.innerText = `FPS: ${fps}`;
     }
     requestAnimationFrame(update);
   }
 
   requestAnimationFrame(update);
-})();
+
+  // permitir fechar clicando
+  fpsBox.onclick = () => fpsBox.remove();
+}
