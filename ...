@@ -34,7 +34,7 @@ function setupMain(){
             "🎉 Script feito por Gabriell2ls60hz",
             "💎 Script feito por Gabriell2ls60hz",
             "💉🩸 Script feito por Gabriell2ls60hz",
-            "⚔ Script feito por Gabriell2ls60hz",
+            "🤣 Script feito por Gabriell2ls60hz",
             "💣💻 Script feito por Gabriell2ls60hz",
         ];
         
@@ -130,7 +130,7 @@ function setupMain(){
                     findAndClickBySelector(q);
                     if (document.querySelector(q+"> div") && document.querySelector(q+"> div").innerText === "Mostrar resumo") {
                         sendToast("🤣 Exercicio feito krlh", 3000);
-                        playAudio("https://s51.aconvert.com/convert/p3r68-cdx67/blijw-oa8ro.wav");
+                        playAudio(".");
                     }
                 }
                 await delay(800);
@@ -150,7 +150,7 @@ loadScript('https://cdn.jsdelivr.net/npm/toastify-js', 'toastifyPlugin')
 .then(async () => {    
     sendToast("😝 Script injetado com sucesso!");
     
-    playAudio('https://s31.aconvert.com/convert/p3r68-cdx67/wlkrg-tld5r.wav');
+    playAudio('.');
     
     await delay(500);
 
