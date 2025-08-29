@@ -1,110 +1,30 @@
 let loadedPlugins = [];
 
 /* Element(s?) */
-const splashScreen = document.createElement('div'); 
-const fpsBox = document.createElement('div');
+const splashScreen = document.createElement('splashScreen');
 
 /* Misc Styles */
-document.head.appendChild(Object.assign(document.createElement("style"), {
-    innerHTML: "@font-face{font-family:'MuseoSans';src:url('https://corsproxy.io/?url=https://r2.e-z.host/4d0a0bea-60f8-44d6-9e74-3032a64a9f32/ynddewua.ttf')format('truetype')}"
-}));
-document.head.appendChild(Object.assign(document.createElement('style'), {
-    innerHTML: "::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: #000; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #000; }"
-}));
-
-/* FPS Box */
-fpsBox.style.cssText = `
-  position:fixed;
-  top:10px;
-  right:10px;
-  background:#000;
-  color:#14bf96;
-  font-family:MuseoSans,sans-serif;
-  font-size:18px;
-  padding:5px 10px;
-  border-radius:12px;
-  z-index:10000;
-  user-select:none;
-`;
-fpsBox.innerText = "0";
-document.body.appendChild(fpsBox);
-
-(function showFPS() {
-    let lastFrame = performance.now();
-    let frames = 0;
-    function loop() {
-        const now = performance.now();
-        frames++;
-        if (now - lastFrame >= 1000) {
-            fpsBox.innerText = frames;
-            frames = 0;
-            lastFrame = now;
-        }
-        requestAnimationFrame(loop);
-    }
-    loop();
-})();
+document.head.appendChild(Object.assign(document.createElement("style"),{innerHTML:"@font-face{font-family:'MuseoSans';src:url('https://corsproxy.io/?url=https://r2.e-z.host/4d0a0bea-60f8-44d6-9e74-3032a64a9f32/ynddewua.ttf')format('truetype')}" }));
+document.head.appendChild(Object.assign(document.createElement('style'),{innerHTML:"::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: #000; } ::-webkit-scrollbar-thumb { background: #000; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #000; }"}));
 
 /* Emmiter */
-class EventEmitter {
-    constructor() { this.events = {} }
-    on(t, e) { "string" == typeof t && (t = [t]), t.forEach(t => { this.events[t] || (this.events[t] = []), this.events[t].push(e) }) }
-    off(t, e) { "string" == typeof t && (t = [t]), t.forEach(t => { this.events[t] && (this.events[t] = this.events[t].filter(t => t !== e)) }) }
-    emit(t, ...e) { this.events[t] && this.events[t].forEach(t => { t(...e) }) }
-    once(t, e) { "string" == typeof t && (t = [t]); let s = (...i) => { e(...i), this.off(t, s) }; this.on(t, s) }
-};
+class EventEmitter{constructor(){this.events={}}on(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]||(this.events[t]=[]),this.events[t].push(e)})}off(t,e){"string"==typeof t&&(t=[t]),t.forEach(t=>{this.events[t]&&(this.events[t]=this.events[t].filter(t=>t!==e))})}emit(t,...e){this.events[t]&&this.events[t].forEach(t=>{t(...e)})}once(t,e){"string"==typeof t&&(t=[t]);let s=(...i)=>{e(...i),this.off(t,s)};this.on(t,s)}}; 
 const plppdo = new EventEmitter();
 
-new MutationObserver((mutationsList) => { 
-    for (let mutation of mutationsList) 
-        if (mutation.type === 'childList') plppdo.emit('domChanged'); 
-}).observe(document.body, { childList: true, subtree: true });
+new MutationObserver((mutationsList) => { for (let mutation of mutationsList) if (mutation.type === 'childList') plppdo.emit('domChanged'); }).observe(document.body, { childList: true, subtree: true });
 
 /* Misc Functions */
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms));
 const playAudio = url => { const audio = new Audio(url); audio.play(); };
-const findAndClickBySelector = selector => { 
-    const element = document.querySelector(selector); 
-    if (element) { 
-        element.click(); 
-        sendToast(`Feito por Gabriell2ls60hz`, 500); 
-    } 
-};
+const findAndClickBySelector = selector => { const element = document.querySelector(selector); if (element) { element.click(); sendToast(`Feito por Gabriell2ls60hz`, 500); } };
 
-function sendToast(text, duration=5000, gravity='upper') { 
-    Toastify({ 
-        text: text, 
-        duration: duration, 
-        gravity: gravity, 
-        position: "center", 
-        stopOnFocus: true, 
-        style: { background: "#14bf96" } 
-    }).showToast(); 
-};
+function sendToast(text, duration=5000, gravity='upper') { Toastify({ text: text, duration: duration, gravity: gravity, position: "center", stopOnFocus: true, style: { background: "#14bf96" } }).showToast(); };
 
-async function showSplashScreen() { 
-    splashScreen.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background-color:#000;display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;transition:opacity 3.0s ease;user-select:none;color:white;font-family:MuseoSans,sans-serif;font-size:30px;text-align:center;"; 
-    splashScreen.innerHTML = '<span style="color:white;">By</span><span style="color:#14bf96;">.Gabriell2ls60hz</span>'; 
-    document.body.appendChild(splashScreen); 
-    setTimeout(() => splashScreen.style.opacity = '1', 10); 
-};
+async function showSplashScreen() { splashScreen.style.cssText = "position:fixed;top:0;left:0;width:100%;height:100%;background-color:#000;display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;transition:opacity 3.0s ease;user-select:none;color:white;font-family:MuseoSans,sans-serif;font-size:30px;text-align:center;"; splashScreen.innerHTML = '<span style="color:white;">By</span><span style="color:#14bf96;">.Gabriell2ls60hz</span>'; document.body.appendChild(splashScreen); setTimeout(() => splashScreen.style.opacity = '1', 10);};
 async function hideSplashScreen() { splashScreen.style.opacity = '0'; setTimeout(() => splashScreen.remove(), 1000); };
 
-async function loadScript(url, label) { 
-    return fetch(url).then(response => response.text()).then(script => { 
-        loadedPlugins.push(label); eval(script); 
-    }); 
-}
-async function loadCss(url) { 
-    return new Promise((resolve) => { 
-        const link = document.createElement('link'); 
-        link.rel = 'stylesheet'; 
-        link.type = 'text/css'; 
-        link.href = url; 
-        link.onload = () => resolve(); 
-        document.head.appendChild(link); 
-    }); 
-}
+async function loadScript(url, label) { return fetch(url).then(response => response.text()).then(script => { loadedPlugins.push(label); eval(script); }); }
+async function loadCss(url) { return new Promise((resolve) => { const link = document.createElement('link'); link.rel = 'stylesheet'; link.type = 'text/css'; link.href = url; link.onload = () => resolve(); document.head.appendChild(link); }); }
 
 /* Main Functions */ 
 function setupMain(){
@@ -167,7 +87,7 @@ function setupMain(){
                         else init.body = body; 
                         sendToast("☠ Video assistido com sucesso", 1000)
                     }
-                } catch (e) { }
+                } catch (e) { debug(`🚨 Error @ videoSpoof.js\n${e}`); }
             }
             return originalFetch.apply(this, arguments);
         };
@@ -184,7 +104,7 @@ function setupMain(){
             if (body && input.url.includes("mark_conversions")) {
                 try {
                     if (body.includes("termination_event")) { sendToast("❌ Limitador de tempo bloqueado krlh", 1000); return; }
-                } catch (e) { }
+                } catch (e) { debug(`🚨 Error @ minuteFarm.js\n${e}`); }
             }
             return originalFetch.apply(this, arguments);
         };
@@ -218,24 +138,62 @@ function setupMain(){
         })();
     })();
 }
+
 /* Inject */
-if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { 
-    alert("❌ Falha ao executar script!\n\nVocê precisa executar o Script no site do Khan Academy burro!"); 
-    window.location.href = "https://pt.khanacademy.org/"; 
-}
+if (!/^https?:\/\/([a-z0-9-]+\.)?khanacademy\.org/.test(window.location.href)) { alert("❌ Falha ao executar script!\n\nVocê precisa executar o Script no site do Khan Academy burro!"); window.location.href = "https://pt.khanacademy.org/"; }
 
 showSplashScreen();
 
-loadScript('https://cdn.jsdelivr.net/npm/darkreader@4.9.92/darkreader.min.js', 'darkReaderPlugin').then(()=>{
-    DarkReader.setFetchMethod(window.fetch); DarkReader.enable(); 
-})
+loadScript('https://cdn.jsdelivr.net/npm/darkreader@4.9.92/darkreader.min.js', 'darkReaderPlugin').then(()=>{ DarkReader.setFetchMethod(window.fetch); DarkReader.enable(); })
 loadCss('https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css', 'toastifyCss');
 loadScript('https://cdn.jsdelivr.net/npm/toastify-js', 'toastifyPlugin')
 .then(async () => {    
     sendToast("😝 Script injetado com sucesso!");
+    
     playAudio('https://s31.aconvert.com/convert/p3r68-cdx67/wlkrg-tld5r.wav');
+    
     await delay(500);
+
     hideSplashScreen();
     setupMain();
+    
     console.clear();
 });
+
+/* ===================== */
+/* FPS COUNTER ADICIONADO*/
+/* ===================== */
+(function () {
+    const fpsBox = document.createElement("div");
+    fpsBox.style.cssText = `
+        position:fixed;
+        top:10px;
+        right:10px;
+        background:#000;
+        color:#14bf96;
+        padding:5px 10px;
+        border-radius:10px;
+        font-family:Arial, sans-serif;
+        font-size:14px;
+        font-weight:bold;
+        z-index:999999;
+    `;
+    fpsBox.innerText = "0";
+    document.body.appendChild(fpsBox);
+
+    let lastFrame = performance.now();
+    let frames = 0;
+    let fps = 0;
+
+    function loop(now) {
+        frames++;
+        if (now - lastFrame >= 1000) {
+            fps = frames;
+            frames = 0;
+            lastFrame = now;
+            fpsBox.innerText = fps;
+        }
+        requestAnimationFrame(loop);
+    }
+    requestAnimationFrame(loop);
+})();
