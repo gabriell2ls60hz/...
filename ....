@@ -1,0 +1,409 @@
+// Configurações do mod
+const settings = {
+  version: "1.0.0",
+  ui: {
+    visible: 0,
+  },
+  modOptions: {
+    darkMode: true,
+    autoSpoof: false,
+    autoComplete: true,
+    autoAnswer: true,
+  },
+  speed: {
+    index: 4,
+    options: [450, 600, 800, 90],
+  },
+};
+
+// --- Funções Auxiliares ---
+
+// Carrega um script externo
+async function loadScript(url) {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = url;
+    script.onload = resolve;
+    document.head.appendChild(script);
+  });
+}
+
+// Carrega um arquivo CSS externo
+async function loadCss(url) {
+  return new Promise((resolve) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.type = "text/css";
+    link.href = url;
+    link.onload = resolve;
+    document.head.appendChild(link);
+  });
+}
+
+// Exibe uma notificação pop-up
+function sendToast(message, duration = 3000, gravity = "bottom") {
+  if (typeof Toastify !== "undefined") {
+    Toastify({
+      text: message,
+      duration: duration,
+      gravity: gravity,
+      position: "left",
+      stopOnFocus: true,
+      style: {
+        background: "linear-gradient(145deg, #1a0630, #2a0a4a)",
+        color: "#ffffff",
+        boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
+      },
+    }).showToast();
+  } else {
+    console.warn("Toastify não está definido:", message);
+  }
+}
+
+// Cria uma pausa assíncrona
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// --- Classe para a Interface de Usuário ---
+
+class UI {
+  constructor() {
+    this.createPanel();
+    this.setupListeners();
+    this.restoreState();
+  }
+
+  createPanel() {
+    const panel = document.createElement("div");
+    panel.id = "crimson-panel";
+    Object.assign(panel.style, {
+      position: "fixed",
+      zIndex: "9999",
+      top: "10px",
+      right: "10px",
+      width: "220px",
+      height: "auto",
+      padding: "18px",
+      border: "1px solid #333",
+      borderRadius: "8px",
+      flexDirection: "column",
+      gap: "10px",
+      background: "linear-gradient(145deg, #1a0630, #2a0a4a)",
+      color: "#b388ff",
+      boxShadow: "0 4px 15px rgba(0, 0, 0, 0.5)",
+      backdropFilter: "blur(3px)",
+      display: "flex",
+    });
+
+    panel.innerHTML = `
+      <style>
+        .crimson-header {
+          color: #fff;
+          font-size: 16px;
+          font-weight: bold;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 8px;
+          padding-right: 14px;
+          border-right: 1px solid #333;
+          user-select: none;
+          cursor: pointer;
+        }
+        .crimson-header.collapsed:hover { transform: rotate(-90deg); }
+        .crimson-content {
+          transition: all 0.3s ease, opacity 0.3s ease;
+          transform: translateY(0);
+          opacity: 1;
+          max-height: 9999px;
+        }
+        .crimson-content.collapsed {
+          transform: translateY(0);
+          opacity: 0;
+          max-height: 0;
+        }
+        .crimson-logo {
+          color: #5e35b1;
+          font-size: 24px;
+          border-radius: 44px;
+        }
+        .crimson-check-item {
+          font-weight: bold;
+          padding-right: 8px;
+          border-right: 1px solid #333;
+          color: #fff;
+          user-select: none;
+          transition: box-shadow 0.3s ease;
+        }
+        .crimson-check-item:hover { box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.3); }
+        .container {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          width: auto;
+          height: auto;
+        }
+        .container input { opacity: 0; width: 0; height: 0; }
+        .slider {
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: #5e35b1;
+          transition: 0.4s;
+          border-radius: 34px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 16px;
+          width: 16px;
+          left: 4px;
+          bottom: 4px;
+          background-color: #fff;
+          transition: 0.4s;
+          border-radius: 50%;
+        }
+        .slider:hover { background-color: #7b1fa2; }
+        .container input:checked + .slider { background-color: #1a0630; }
+        .container input:checked + .slider:before { transform: translateX(26px); }
+      </style>
+      <div class="crimson-header">
+        <span>v${settings.version}</span>
+      </div>
+      <div class="crimson-content">
+        <div class="crimson-check-item">
+          <i>Auto Speed</i>
+          <div class="container">
+            <label class="switch" id="autoCheck">
+              <input type="checkbox" id="autoCheckInput" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="crimson-check-item">
+          <i>Auto Spoof</i>
+          <div class="container">
+            <label class="switch" id="spoofCheck">
+              <input type="checkbox" id="spoofCheckInput">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="crimson-check-item">
+          <i>Dark Mode</i>
+          <div class="container">
+            <label class="switch" id="darkModeCheck">
+              <input type="checkbox" id="darkModeCheckInput">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+        <div class="crimson-check-item" id="speedControlContainer" style="display: none;">
+          <i>Velocidade</i>
+          <div style="width: 100%; display: flex; font-weight: bold; align-items: center; padding-right: 14px; border-left: 1px solid #333;">
+            <div class="speed-control-container">
+              <input type="range" min="0" max="3" value="0" class="speed-control" id="speedSlider">
+              <div class="crimson-logo-container" id="speedValue" style="display: none;"></div>
+            </div>
+          </div>
+        </div>
+        <button class="discord-btn" id="discordBtn">Junte-se ao nosso Discord</button>
+        <div class="crimson-logo-container">Feito por CrimsonStrauss</div>
+      </div>
+    `;
+
+    document.body.appendChild(panel);
+  }
+
+  setupListeners() {
+    const header = document.querySelector(".crimson-header");
+    const content = document.querySelector(".crimson-content");
+
+    header.addEventListener("click", () => {
+      header.classList.toggle("collapsed");
+      content.classList.toggle("collapsed");
+      const isCollapsed = header.classList.contains("collapsed");
+      localStorage.setItem("crimson-collapsed", isCollapsed);
+      sendToast(isCollapsed ? "Menu recolhido" : "Menu expandido", 2000);
+    });
+
+    document.getElementById("autoCheckInput").onchange = (e) => {
+      settings.modOptions.autoSpoof = e.target.checked;
+      document.getElementById("speedControlContainer").style.display = settings.modOptions.autoSpoof ? "flex" : "none";
+      sendToast(settings.modOptions.autoSpoof ? "✔️ Auto Speed ativado" : "✖️ Auto Speed desativado", 3000);
+    };
+
+    const speedSlider = document.getElementById("speedSlider");
+    const speedValue = document.getElementById("speedValue");
+    speedSlider.value = settings.speed.options.indexOf(settings.speed.index);
+
+    speedSlider.oninput = () => {
+      const value = parseInt(speedSlider.value);
+      const speed = settings.speed.options[value];
+      settings.speed.index = speed;
+      speedValue.textContent = speed + "ms";
+    };
+
+    document.getElementById("spoofCheckInput").onchange = (e) => {
+      settings.modOptions.autoComplete = e.target.checked;
+      sendToast(settings.modOptions.autoComplete ? "✔️ Auto Spoof ativado" : "✖️ Auto Spoof desativado", 3000);
+    };
+
+    document.getElementById("darkModeCheckInput").onchange = (e) => {
+      settings.modOptions.darkMode = e.target.checked;
+      if (typeof DarkReader !== "undefined") {
+        if (settings.modOptions.darkMode) {
+          DarkReader.enable();
+          sendToast("🌑 Dark Mode ativado", 3000);
+        } else {
+          DarkReader.disable();
+          sendToast("☀️ Dark Mode desativado", 3000);
+        }
+      } else {
+        console.warn("DarkReader não está carregado");
+        sendToast("⚠️ Dark Mode não está disponível. Recarregue a página.", 5000);
+      }
+    };
+
+    document.getElementById("discordBtn").addEventListener("click", () => {
+      window.open("https://discord.gg/crimsonstrauss", "_blank");
+    });
+  }
+
+  restoreState() {
+    const isCollapsed = localStorage.getItem("crimson-collapsed") === "true";
+    const header = document.querySelector(".crimson-header");
+    const content = document.querySelector(".crimson-content");
+    if (isCollapsed) {
+      header.classList.add("collapsed");
+      content.classList.add("collapsed");
+    }
+  }
+}
+
+// --- Classe Principal do Mod ---
+
+class Core {
+  constructor() {
+    this.setupMod();
+    this.setupAuto();
+  }
+
+  async setupMod() {
+    try {
+      await loadScript("https://cdn.jsdelivr.net/npm/darkreader@4.9.69/darkreader.min.js");
+      await loadCss("https://cdn.jsdelivr.net/npm/toastify-js@1.11.2/src/toastify.min.css");
+      
+      if (typeof DarkReader !== "undefined") {
+        DarkReader.setFetchMethod(window.fetch);
+        if (settings.modOptions.darkMode) {
+          DarkReader.enable();
+        }
+      } else {
+        console.error("DarkReader não foi carregado corretamente");
+      }
+
+      if (typeof Toastify !== "undefined") {
+        sendToast("☪️ Crimson mod carregado com sucesso!");
+      } else {
+        console.error("Toastify não foi carregado corretamente");
+      }
+    } catch (error) {
+      console.error("Erro ao carregar bibliotecas externas:", error);
+    }
+  }
+
+  setupAuto() {
+    const messages = ["👽 O que é isso?", "👻 Feito por CrimsonStrauss [@crimson]."];
+    const originalFetch = window.fetch;
+    
+    // Intercepta requisições de rede
+    window.fetch = async function(url, options) {
+      const response = await originalFetch.apply(this, arguments);
+      const clonedResponse = response.clone();
+      
+      try {
+        const data = await clonedResponse.json();
+        
+        if (data?.data?.assessmentItem?.data?.answers?.data) {
+          const answer = JSON.parse(data.data.assessmentItem.data.answers.data);
+          
+          if (answer.itemData.text[0] === answer.itemData.text[0].toUpperCase() && settings.modOptions.autoComplete) {
+            // Modifica a resposta do exercício
+            answer.widgets.answerArea.choices.default.alignment = true;
+            answer.widgets.answerArea.choices.default.onePerLine = false;
+            answer.widgets.answerArea.choices.default.multipleSelect = false;
+            answer.widgets.answerArea.choices.default.randomize = true;
+            answer.widgets.answerArea.choices.default.displayCount = false;
+            answer.widgets.answerArea.choices.default.hasNoneOfTheAbove = true;
+            answer.itemData.text = messages[Math.floor(Math.random() * messages.length)] + "[[☃ resposta Certa]]";
+            
+            // Retorna a nova resposta modificada
+            data.data.assessmentItem.data.answers.data = JSON.stringify(answer);
+            sendToast("🔓 Resposta Bypassed", 2000);
+            
+            return new Response(JSON.stringify(data), {
+              headers: response.headers,
+              statusText: response.statusText,
+              status: response.status,
+            });
+          }
+        }
+      } catch (error) {
+        // Ignora erros de parsing
+      }
+      
+      return response;
+    };
+
+    const buttonClasses = ["_1yok8f4", "_rz7ls7u", "_1f0fvyce", "_ssxvf9l", "_1tuo6xk", "_4i5p5ae", "_s6zfc1u", "_1e5cuk2a", "_1r8cd7xe"];
+    
+    // Clica em um botão com a classe específica
+    function clickButton(selector) {
+      const btn = document.getElementsByClassName(selector)[0];
+      if (btn) {
+        btn.click();
+        return !!btn;
+      }
+      return false;
+    }
+
+    // Clica em todos os botões de exercício
+    function clickAllButtons() {
+      if (!settings.modOptions.autoSpoof) return;
+      
+      for (const selector of buttonClasses) {
+        clickButton(selector);
+        sleep(settings.speed.options[settings.speed.index] / 5);
+      }
+      
+      const checkButton = document.querySelector("[data-testid=\"_4i5p5ae\"]");
+      if (checkButton) {
+        checkButton.click();
+        sleep(settings.speed.options[settings.speed.index] / 5);
+      }
+    }
+
+    // Executa a automação em um intervalo
+    setInterval(() => {
+      clickAllButtons();
+      sleep(settings.speed.options[settings.speed.index] / 3);
+    }, 1000); // Roda a cada segundo
+  }
+}
+
+// Inicia a aplicação
+async function initApp() {
+  try {
+    const core = new Core();
+    const ui = new UI();
+    console.log("☪️ Crimson mod v" + settings.version + " inicializado com sucesso!");
+    sendToast("☪️ Crimson mod v" + settings.version + " carregado!", 5000);
+  } catch (error) {
+    console.error("Erro ao inicializar ☪️ Crimson mod:", error);
+    sendToast("⚠️ Erro ao inicializar ☪️ Crimson mod", 5000);
+  }
+}
+
+initApp();
